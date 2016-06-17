@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+#DH_VERBOSE = 1
+DPKG_EXPORT_BUILDFLAGS = 1
+
+# "Intelligently" find the source package name.
+PACKAGE_NAME=$(shell dpkg-parsechangelog | head -n 1 | cut -d ' ' -f 2)
+
+include /usr/share/dpkg/default.mk
+%:
+	$(info PACKAGE_NAME found as $(PACKAGE_NAME))
+	dh $@
+
+# Remove executable bit from CSS files, etc.
+override_dh_fixperms:
+	dh_fixperms
+	find debian/$(PACKAGE_NAME) -type f -perm 755 -print -exec chmod 644 {} \;
