@@ -1,0 +1,5 @@
+zuki-themes (3.20+git20160813~c8bc920-1) unstable; urgency=medium
+
+  * Initial Debian release. (Closes: #834278)
+
+ -- James Lu <bitflip3@gmail.com>  Sat, 13 Aug 2016 17:47:29 -0700

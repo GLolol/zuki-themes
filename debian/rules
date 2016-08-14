@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+#DH_VERBOSE = 1
+DPKG_EXPORT_BUILDFLAGS = 1
+
+PACKAGE=zuki-themes
+
+include /usr/share/dpkg/default.mk
+%:
+	dh $@
+
+# Remove executable bit from CSS files, etc.
+override_dh_fixperms:
+	dh_fixperms
+	find debian/$(PACKAGE) -type f -perm 755 -print -exec chmod 644 {} \;
+
+override_dh_auto_clean:
+	# Remove screenshots from source tree when building, because these are not
+	# part of Git-generated archives and will cause build errors.
+	rm -f zukitwo.png zukitre.png
+	dh_auto_clean
+
+# Remove bundled shell scripts as they don't use the right interpreter paths
+# and are otherwise not needed in the final theme package.
+override_dh_install:
+	dh_install
+	# Removing unneeded shell scripts.
+	find debian/$(PACKAGE) -type f -name "*.sh" -print -delete
+
+# get-orig-source rule to fetch the sources from the Git snapshot.
+# This looks as the "commithash" portion of the Debian package version, in the
+# format majorversion~commithash-1.
+VERSION = $(shell dpkg-parsechangelog --show-field=Version)
+ORIG_VERSION = $(shell echo $(VERSION) | cut -f 1 -d '-')
+COMMIT = $(shell echo $(ORIG_VERSION) | cut -f 2 -d '~')
+URL = https://github.com/lassekongo83/zuki-themes
+
+get-orig-source:
+	# Cloning upstream repository.
+	git clone $(URL) "$(PACKAGE)-$(ORIG_VERSION)"
+	# Generating archive from commit.
+	cd "$(PACKAGE)-$(ORIG_VERSION)" && git archive -v $(COMMIT) -o \
+	../$(PACKAGE)_$(ORIG_VERSION).orig.tar.gz
+	# Removing temporary Git tree.
+	rm -rf "$(PACKAGE)-$(ORIG_VERSION)"
