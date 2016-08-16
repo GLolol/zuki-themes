@@ -3,7 +3,7 @@ Upstream-Name: zuki-themes
 Source: https://github.com/lassekongo83/zuki-themes
 
 Files: *
-Copyright: 2014-2016 lassekongo83
+Copyright: 2014-2016 lassekongo83 <lassekongo83@yahoo.se>
 License: GPL-3.0
 
 Files: debian/*
