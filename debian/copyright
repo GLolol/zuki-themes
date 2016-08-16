@@ -6,6 +6,13 @@ Files: *
 Copyright: 2014-2016 lassekongo83 <lassekongo83@yahoo.se>
 License: GPL-3.0
 
+Files: Zuki-shell/gnome-shell/gnome-shell.css
+       Zuki-shell/gnome-shell/gnome-shell-high-contrast.css
+       Zuki-shell/gnome-shell/gnome-shell-sass/_common.scss
+Copyright: 2009, 2015 Red Hat, Inc.
+           2009 Intel Corporation
+License: LGPL-2.1
+
 Files: debian/*
 Copyright: 2016 James Lu <bitflip3@gmail.com>
 License: GPL-3.0
@@ -25,3 +32,16 @@ License: GPL-3.0
  .
  On Debian systems, the complete text of the GNU General
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+
+License: LGPL-2.1
+ This program is free software; you can redistribute it and/or modify it
+ under the terms and conditions of the GNU Lesser General Public License,
+ version 2.1, as published by the Free Software Foundation.
+ .
+ This program is distributed in the hope it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ more details.
+ .
+ On Debian systems, the complete text of the GNU Lesser General Public
+ License version 2.1 can be found in "/usr/share/common-licenses/LGPL-2.1".
