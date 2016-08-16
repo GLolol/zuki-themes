@@ -5,8 +5,8 @@ Maintainer: James Lu <bitflip3@gmail.com>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.8
 Homepage: https://github.com/lassekongo83/zuki-themes
-Vcs-Git: https://github.com/utopia-repository/zuki-themes
-Vcs-Browser: https://github.com/utopia-repository/zuki-themes
+Vcs-Git: https://anonscm.debian.org/cgit/collab-maint/zuki-themes.git/
+Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/zuki-themes.git/
 
 Package: zuki-themes
 Architecture: all
