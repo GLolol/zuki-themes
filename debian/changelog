@@ -1,0 +1,6 @@
+zuki-themes (3.14-1-0utopia1~deb8u1) jessie; urgency=low
+
+  * Initial release for Debian Jessie.
+  * Utopia Repository upload.
+
+ -- James Lu <bitflip3@gmail.com>  Sat, 20 Aug 2016 22:23:12 -0700

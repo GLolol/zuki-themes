@@ -1,0 +1,20 @@
+Source: zuki-themes
+Section: gnome
+Priority: optional
+Maintainer: James Lu <bitflip3@gmail.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+Homepage: https://github.com/lassekongo83/zuki-themes
+Vcs-Git: https://github.com/GLolol/zuki-themes
+Vcs-Browser: https://github.com/GLolol/zuki-themes
+
+Package: zuki-themes
+Architecture: all
+Depends: ${misc:Depends},
+ gtk2-engines-murrine,
+ gtk2-engines-pixbuf,
+ libgtk-3-0 (>= 3.14~)
+Description: Zuki themes for GNOME, Xfce and more
+ Zuki is a set of GTK+ themes for GNOME, Xfce, and other desktops.
+ .
+ This package provides the GTK+ theming and the GNOME Shell theme.
