@@ -1,3 +1,11 @@
+zuki-themes (3.22-1+git20170409~4fdb5b3-0utopia1) unstable; urgency=medium
+
+  * New upstrem release, now with GTK+ 3.22 support.
+  * Move Vcs-* URLs to the utopia-repository GitHub.
+  * Bump GTK+ dependency to 3.22.
+
+ -- James Lu <bitflip3@gmail.com>  Wed, 12 Apr 2017 17:26:16 -0700
+
 zuki-themes (3.20.1-1) unstable; urgency=medium
 
   * Initial Debian release. (Closes: #834278)

@@ -25,3 +25,21 @@ override_dh_install:
 	dh_install
 	# Removing unneeded shell scripts.
 	find debian/$(PACKAGE) -type f -name "*.sh" -print -delete
+
+# get-orig-source rule to fetch the sources from the Git snapshot.
+# This looks as the "commithash" portion of the Debian package version, in the
+# format majorversion~commithash-1.
+VERSION = $(shell dpkg-parsechangelog --show-field=Version)
+ORIG_VERSION = $(shell echo $(VERSION) | rev | cut -f 2,3 -d '-' | rev)
+COMMIT = $(shell echo $(ORIG_VERSION) | cut -f 2 -d '~')
+URL = https://github.com/lassekongo83/zuki-themes
+
+get-orig-source:
+	# Cloning upstream repository.
+	git clone $(URL) "$(PACKAGE)-$(ORIG_VERSION)"
+	# Generating archive from commit.
+	cd "$(PACKAGE)-$(ORIG_VERSION)" && git archive -v $(COMMIT) -o \
+	../$(PACKAGE)_$(ORIG_VERSION).orig.tar.gz
+	# Removing temporary Git tree.
+	rm -rf "$(PACKAGE)-$(ORIG_VERSION)"
+
