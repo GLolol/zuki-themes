@@ -386,29 +386,69 @@ treeview entry {
   }
 }
 
+.entry-tag {
+  // sizing
+  padding: 5px;
+
+  margin-top: 2px;
+  margin-bottom: 2px;
+
+  // side margins: compensate the entry padding with a negative margin
+  // then the negative margin itself
+  :dir(ltr) & {
+    margin-left: 8px;
+    margin-right: -5px;
+  }
+  :dir(rtl) & {
+    margin-left: -5px;
+    margin-right: 8px;
+  }
+
+  border-style: none;
+
+  $_entry_tag_color: if($variant=='light', $selected_fg_color, $base_color);
+  color: $_entry_tag_color;
+
+  $_entry_tag_bg: if($variant=='light', $selected_bg_color, mix($fg_color, $base_color, 50%));
+  background-color: $_entry_tag_bg;
+
+  &:hover {
+    background-color: lighten($_entry_tag_bg, 10%);
+  }
+
+  :backdrop & {
+    color: $backdrop_base_color;
+    background-color: if($variant=='light', $selected_bg_color,
+                                            mix($backdrop_fg_color, $backdrop_base_color, 50%));
+  }
+
+  &.button {
+    background-color: transparent;
+    color: transparentize($_entry_tag_color, 0.3);
+  }
+
+  :not(:backdrop) &.button {
+    &:hover {
+      border: 1px solid $_entry_tag_bg;
+      color: $_entry_tag_color;
+    }
+    &:active {
+      background-color: $_entry_tag_bg;
+      color: transparentize($_entry_tag_color, 0.3);
+    }
+  }
+}
+
 /***********
  * Buttons *
  ***********/
 
 // stuff for .needs-attention
 $_dot_color: if($variant=='light', $selected_bg_color,
-                                   lighten($selected_bg_color, 15%));
+                                   lighten($selected_bg_color,15%));
 @keyframes needs_attention {
-  from {
-    background-image: -gtk-gradient(radial,
-                                    center center, 0,
-                                    center center, 0.01,
-                                    to($_dot_color),
-                                    to(transparent));
-  }
-
-  to {
-    background-image: -gtk-gradient(radial,
-                                    center center, 0,
-                                    center center, 0.5,
-                                    to($selected_bg_color),
-                                    to(transparent));
-  }
+  from { background-image: radial-gradient(farthest-side, $_dot_color 0%, transparentize($_dot_color, 1) 0%); }
+  to { background-image: radial-gradient(farthest-side, $_dot_color 95%, transparentize($_dot_color, 1)); }
 }
 
 %button,
@@ -702,16 +742,8 @@ button {
   animation: needs_attention 150ms ease-in;
   $_dot_shadow: _text_shadow_color();
   $_dot_shadow_r: if($variant=='light',0.5,0.45);
-  background-image: -gtk-gradient(radial,
-                                  center center, 0,
-                                  center center, 0.5,
-                                  to($_dot_color),
-                                  to(transparent)),
-                    -gtk-gradient(radial,
-                                  center center, 0,
-                                  center center, $_dot_shadow_r,
-                                  to($_dot_shadow),
-                                  to(transparent));
+  background-image: radial-gradient(farthest-side, $_dot_color 96%, transparentize($_dot_color,1 )),
+                    radial-gradient(farthest-side, $_dot_shadow 95%, transparentize($_dot_shadow, 1));
   background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
 
@@ -763,43 +795,33 @@ $btn-shadow-middle:
     0 1px $shadow-color,
     0px 0 $shadow-color,
     0 -1px $shadow-color,
-    inset 0px 0 $inset-color, 
-    inset 0 1px $inset-color, 
-    inset 0px 0 $inset-color, 
+    inset 0px 0 $inset-color,
+    inset 0 1px $inset-color,
+    inset 0px 0 $inset-color,
     inset 0 -1px $inset-color;
-$btn-shadow-middle-vert: 
-    1px 0 $shadow-color,
-    0 0px $shadow-color,
-    1px 0 $shadow-color,
-    0 0px $shadow-color,
-    inset 1px 0 $inset-color, 
-    inset 0 0px $inset-color, 
-    inset -1px 0 $inset-color, 
-    inset 0 0px $inset-color;
-$btn-shadow-left: 
+$btn-shadow-left:
     0px 0 $shadow-color,
     0 1px $shadow-color,
     -1px 0 $shadow-color,
     0 -1px $shadow-color,
-    inset 1px 0 $inset-color, 
-    inset 0 1px $inset-color, 
-    inset 0px 0 $inset-color, 
+    inset 1px 0 $inset-color,
+    inset 0 1px $inset-color,
+    inset 0px 0 $inset-color,
     inset 0 -1px $inset-color;
-$btn-shadow-right: 
+$btn-shadow-right:
     1px 0 $shadow-color,
     0 1px $shadow-color,
     0px 0 $shadow-color,
     0 -1px $shadow-color,
-    inset 0px 0 $inset-color, 
-    inset 0 1px $inset-color, 
-    inset -1px 0 $inset-color, 
+    inset 0px 0 $inset-color,
+    inset 0 1px $inset-color,
+    inset -1px 0 $inset-color,
     inset 0 -1px $inset-color;
 
 %linked_middle {
   border-radius: 0;
   border-right-style: none;
-  border-right-width: 0;
-  border-left-width: 0;
+  border-left-style: none;
   box-shadow: $btn-shadow-middle;
   // FIXME: Figure out how this looks on colored titlebars.
   &:active { @include button(active); }
@@ -813,8 +835,8 @@ $btn-shadow-right:
   &:first-child {
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
-    border-left-width: 1px;
-    border-right-width: 0;
+    border-left-style: solid;
+    border-right-style: none;
     box-shadow: $btn-shadow-left;
     &:active { @include button(active); }
     &:checked { @include button(active); }
@@ -824,9 +846,8 @@ $btn-shadow-right:
   &:last-child {
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
+    border-left-style: none;
     border-right-style: solid;
-    border-left-width: 0;
-    border-right-width: 1px;
     box-shadow: $btn-shadow-right;
     &:active { @include button(active); }
     &:checked { @include button(active); }
@@ -847,19 +868,21 @@ $btn-shadow-right:
 %linked_vertical_middle {
   border-style: solid solid none solid;
   border-radius: 0;
-  box-shadow: $btn-shadow-middle-vert;
+  box-shadow: none;
 }
 
-%linked_vertical{
+%linked_vertical {
   @extend %linked_vertical_middle;
   &:first-child {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
+    box-shadow: none;
   }
   &:last-child {
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
-    border-style: solid;
+    border-bottom-style: solid;
+    box-shadow: none;
   }
   &:only-child {
     border-radius: 3px;
@@ -1386,8 +1409,14 @@ headerbar {
     }
   }
 
+  // squared corners when the window is maximized, tiled, or fullscreen
   .tiled &,
-  .maximized & { border-radius: 0; } // squared corners when the window is maximized or tiled
+  .maximized &,
+  .fullscreen & {
+    &:backdrop, & {
+      border-radius: 0;
+    }
+  }
 
   &.default-decoration {
     padding: 4px;
@@ -1430,10 +1459,10 @@ headerbar {
 }
 
 headerbar { // headerbar border rounding
-  window:not(.tiled):not(.maximized):not(.solid-csd) separator:first-child + &, // tackles the paned container case
-  window:not(.tiled):not(.maximized):not(.solid-csd) &:first-child { &:backdrop, & { border-top-left-radius: 7px; }}
-  window:not(.tiled):not(.maximized):not(.solid-csd) &:last-child { &:backdrop, & { border-top-right-radius: 7px; }}
-  window:not(.tiled):not(.maximized):not(.solid-csd) stack & { // tackles the stacked headerbars case
+  window:not(.tiled):not(.maximized):not(.fullscreen):not(.solid-csd) separator:first-child + &, // tackles the paned container case
+  window:not(.tiled):not(.maximized):not(.fullscreen):not(.solid-csd) &:first-child { &:backdrop, & { border-top-left-radius: 7px; }}
+  window:not(.tiled):not(.maximized):not(.fullscreen):not(.solid-csd) &:last-child { &:backdrop, & { border-top-right-radius: 7px; }}
+  window:not(.tiled):not(.maximized):not(.fullscreen):not(.solid-csd) stack & { // tackles the stacked headerbars case
     &:first-child, &:last-child {
       &:backdrop, & {
         border-top-left-radius: 7px;
@@ -1633,8 +1662,6 @@ treeview.view {
         transition: none; //I shouldn't need this
       }
     }
-
-    button:last-child { &:backdrop, & { border-right-style: none; }}
   }
 
   button.dnd,
@@ -1675,6 +1702,8 @@ treeview.view {
     border-color: $bg_color;
     background-image: none;
   }
+
+  &:last-child { &:backdrop, & { border-right-style: none; }}
 }
 
 /*********
@@ -2093,7 +2122,7 @@ notebook {
  **************/
 scrollbar {
   $_slider_min_length: 40px;
-  $_scrollbar_size: 13px;
+  $_scrollbar_size: 11px;
 
   // disable steppers
   @at-root * {
@@ -3632,7 +3661,7 @@ colorchooser .popover.osd { border-radius: 5px; }
 
   &:hover { -gtk-icon-effect: highlight; }
 
-  rubberband { @extend rubberband; }
+  rubberband, .rubberband { @extend rubberband; }
 }
 
 .scale-popup {
@@ -3868,11 +3897,20 @@ stackswitcher button.text-button.circular { // FIXME aggregate with buttons
   padding: 0;
 }
 
-/* Various fixes */
+// Floating bar
 
-.floating-bar { /* Makes the floating-bar less annoying */
-  background-color: $base_color;
-  &.bottom.left { border-top-right-radius: 2px; }
-  &.bottom.right { border-top-left-radius: 2px; }
+.floating-bar {
+  background-color: $bg_color;
+  font-size: smaller;
+  &.bottom.left {
+    border-top-right-radius: 2px;
+    border-top: 1px solid $borders_color;
+    border-right: 1px solid $borders_color;
+  }
+  &.bottom.right {
+    border-top-left-radius: 2px;
+    border-top: 1px solid $borders_color;
+    border-left: 1px solid $borders_color;
+  }
   font-size: smaller;
 }
