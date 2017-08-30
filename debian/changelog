@@ -1,6 +1,13 @@
+zuki-themes (3.24-2-0utopia1) unstable; urgency=medium
+
+  * New upstream release targetting GTK+ 3.24.
+  * Bump Standards-Version to 4.1.0, no changes needed.
+
+ -- James Lu <bitflip3@gmail.com>  Tue, 29 Aug 2017 22:26:46 -0700
+
 zuki-themes (3.22-1+git20170409~4fdb5b3-0utopia1) unstable; urgency=medium
 
-  * New upstrem release, now with GTK+ 3.22 support.
+  * New upstream release, now with GTK+ 3.22 support.
   * Move Vcs-* URLs to the utopia-repository GitHub.
   * Bump GTK+ dependency to 3.22.
 
