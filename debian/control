@@ -3,7 +3,7 @@ Section: gnome
 Priority: optional
 Maintainer: James Lu <bitflip3@gmail.com>
 Build-Depends: debhelper (>= 9)
-Standards-Version: 3.9.8
+Standards-Version: 4.1.0
 Homepage: https://github.com/lassekongo83/zuki-themes
 Vcs-Git: https://github.com/utopia-repository/zuki-themes
 Vcs-Browser: https://github.com/utopia-repository/zuki-themes
