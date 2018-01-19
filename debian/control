@@ -13,7 +13,7 @@ Architecture: all
 Depends: ${misc:Depends},
  gtk2-engines-murrine,
  gtk2-engines-pixbuf,
- libgtk-3-0 (>= 3.24~)
+ libgtk-3-0 (>= 3.22~)
 Recommends: fonts-roboto
 Description: Zuki themes for GNOME, Xfce and more
  Zuki is a set of GTK+ themes for GNOME, Xfce, and other desktops.
