@@ -56,6 +56,16 @@ XfceHeading,
 .xfce4-panel menu {
   -gtk-icon-effect: none;
   text-shadow: none;
+  
+  // plano-theme #25
+  button {
+    @include button(normal);
+    &:hover { @include button(hover); }
+    &:active, &:checked { @include button(active); }
+    &:active:hover, &:checked:hover { @include button(hoveractive); }
+    &.default { @include button(focus); }
+    &:disabled { @include button(insensitive); }
+  }
 }
 
 // Temporary fixes for certain XFCE applets using GTK3
@@ -121,7 +131,7 @@ menu,
 .caja-side-pane .frame { border-width: 1px 0 0; }
 .caja-notebook .frame { border-width: 0 0 1px; }
 
-/* Nautilus and nemo */
+// Desktop icons FIXME: Remove legacy nautilus stuff after Ubuntu 18.04 LTS ends support
 .nautilus-desktop.nautilus-canvas-item, .nemo-desktop.nemo-canvas-item {
   color: white;
   text-shadow: 1px 1px 2px transparentize(black, 0.2);
@@ -129,18 +139,14 @@ menu,
 
 .nautilus-window {
   // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=724096
-
   searchbar { border-top: 1px solid $borders_color; }
   .searchbar-container { margin-top: -1px; }
+  
+  // Without this nautilus iconview grabs the bg_color
+  notebook,
+  notebook > stack:not(:only-child) searchbar { @extend .view; }
 }
 
-// Without this nautilus iconview grabs the bg_color
-.nautilus-window notebook,
-.nautilus-window notebook > stack:not(:only-child) searchbar {
-  @extend .view;
-}
-
-// Shouldn't be needed
 .disk-space-display {
   border-style: solid;
   border-width: 2px;
@@ -159,46 +165,6 @@ menu,
   }
 }
 
-// Nemo is very ugly and needs special fixes
-.nemo-window {
-
-  .nemo-places-sidebar.frame { border-width: 0; }
-  notebook { @extend .view; }
-
-  // Rename entry
-  .nemo-window-pane widget.entry {
-    border: 1px solid;
-    border-radius: 3px;
-
-    @include entry(focus);
-
-    &:selected { &:focus, & { @extend %selected_items; }}
-  }
-}
-
-// Nemo is so bad
-.places-treeview {
-  -NemoPlacesTreeView-disk-full-bg-color: $base_color;
-  -NemoPlacesTreeView-disk-full-fg-color: $selected_bg_color;
-  -NemoPlacesTreeView-disk-full-bar-width: 2px;
-  -NemoPlacesTreeView-disk-full-bar-radius: 1px;
-  -NemoPlacesTreeView-disk-full-bottom-padding: 1px;
-  -NemoPlacesTreeView-disk-full-max-length: 70px;
-
-  &:selected {
-    -NemoPlacesTreeView-disk-full-bg-color: $base_color;
-    -NemoPlacesTreeView-disk-full-fg-color: darken($selected_bg_color, 15%);
-  }
-}
-
-.nemo-window .sidebar .view {
-  background-color: mix($bg_color, $base_color, 50%);
-}
-
-.nemo-window .sidebar treeview .cell:selected {
-  @extend %selected_items;
-}
-
 // EoG fix - https://github.com/lassekongo83/zuki-themes/issues/113
 button:last-child {
   &.osd.image-button { border-right-style: none; }
@@ -212,3 +178,28 @@ button:last-child {
 }
 
 .switcher-visible *> .frame { border-width: 1px 0 1px 0; }
+
+// Chromium - https://github.com/lassekongo83/zuki-themes/issues/127
+window.background.chromium {
+  background-color: $bg_color;
+  button { border-color: $borders_color; } // tab borders
+}
+
+// Thunar
+.thunar {
+  .standard-view { border-width: 0; }
+  toolbar { border-bottom: 1px solid $borders_color; }
+}
+
+// Nemo
+.nemo-window {
+  // Rename entry
+  .nemo-window-pane widget.entry {
+    border: 1px solid;
+    border-radius: 3px;
+
+    @include entry(focus);
+
+    &:selected { &:focus, & { @extend %selected_items; }}
+  }
+}
