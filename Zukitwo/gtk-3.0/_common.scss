@@ -244,11 +244,6 @@ entry {
       &.right { padding-left: 6px; padding-right: 0; }
     }
 
-    undershoot {
-      &.left { @include undershoot(left); }
-      &.right { @include undershoot(right); }
-    }
-
     &.flat {
       &:focus, &:backdrop, &:disabled, &:backdrop:disabled, & {
         min-height: 0;
@@ -321,6 +316,10 @@ entry {
   .linked:not(.vertical) > &:focus + button,
   .linked:not(.vertical) > &:focus + combobox > box > button.combo { border-left-color: entry_focus_border(); }
 
+  .linked:not(.vertical) > &:focus.error + &,
+  .linked:not(.vertical) > &:focus.error + button,
+  .linked:not(.vertical) > &:focus.error + combobox > box > button.combo { border-left-color: entry_focus_border($error_color); }
+
   .linked:not(.vertical) > &:drop(active) + &,
   .linked:not(.vertical) > &:drop(active) + button,
   .linked:not(.vertical) > &:drop(active) + combobox > box > button.combo { border-left-color: $drop_target_color; }
@@ -345,6 +344,9 @@ entry {
     + %entry:focus:not(:only-child),
     + entry:focus:not(:only-child) { border-top-color: entry_focus_border(); }
 
+    + %entry:focus.error:not(:only-child),
+    + entry:focus.error:not(:only-child) { border-top-color: entry_focus_border($error_color); }
+
     + %entry:drop(active):not(:only-child),
     + entry:drop(active):not(:only-child) { border-top-color: $drop_target_color; }
 
@@ -355,6 +357,13 @@ entry {
       + entry,
       + button,
       + combobox > box > button.combo { border-top-color: entry_focus_border(); }
+    }
+
+    &:focus.error:not(:only-child) {
+      + %entry,
+      + entry,
+      + button,
+      + combobox > box > button.combo { border-top-color: entry_focus_border($error_color); }
     }
 
     &:drop(active):not(:only-child) {
@@ -733,6 +742,7 @@ button {
   &.circular { // The Bloody Circul Button
     border-radius: 9999px;
     -gtk-outline-radius: 9999px;
+    padding: 4px; // circles instead of ellipses
 
     label { padding: 0; }
   }
@@ -980,6 +990,8 @@ button.color {
 
     *:selected & { color: mix($selected_fg_color, $selected_bg_color, 80%); }
   }
+
+  &:disabled, &:disabled:backdrop { color: transparentize(desaturate($link_color,100%), 0.2); }
 
   &:backdrop { &:backdrop:hover, &:backdrop:hover:selected, & { color: $selected_bg_color; }}
 
@@ -1327,6 +1339,7 @@ headerbar {
     @extend .dim-label;
   }
 
+  .selection-mode &,
   &.selection-mode {
     $_hc: mix($top_hilight, $selected_bg_color, 50%); // hilight color
 
@@ -1340,6 +1353,11 @@ headerbar {
       background-color: $selected_bg_color;
       background-image: none;
       box-shadow: inset 0 1px mix($top_hilight, $selected_bg_color, 60%);
+
+      label {
+        text-shadow: none;
+        color: $selected_fg_color; 
+      }
     }
 
     .subtitle:link { @extend *:link:selected;  }
@@ -1438,13 +1456,27 @@ headerbar {
       padding: 0;
     }
   }
+
+  separator.titlebutton { opacity: 0; } // hide the close button separator
+
+  .solid-csd & {
+    &:backdrop, & {
+      &:dir(rtl), &:dir(ltr) { // specificity bump
+        margin-left: -1px;
+        margin-right: -1px;
+        margin-top: -1px;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  }
 }
 
 headerbar {
   // add vertical margins to common widget on the headerbar to avoid them spanning the whole height
   entry,
   spinbutton,
-  separator,
+  separator:not(.sidebar),
   button {
     margin-top: 4px;
     margin-bottom: 4px;
@@ -1452,6 +1484,16 @@ headerbar {
   switch {
     margin-top: 7px;
     margin-bottom: 7px;
+  }
+
+  &.titlebar headerbar:not(.titlebar) {
+    // Drop the background of non-titlebar nested headerbars. This is needed to
+    // work around headerbar sliding animation issues without refactoring
+    // Adwaita's support of titlebars and headerbars as it may break
+    // applications.
+    // See https://gitlab.gnome.org/GNOME/gtk/issues/1264 for more information.
+    background: none;
+    box-shadow: none;
   }
 }
 
@@ -1526,7 +1568,7 @@ headerbar { // headerbar border rounding
     box-shadow: none;
   }
 
-  > separator { background-color: $borders_color; }
+  separator { background-color: $borders_color; }
 
   @extend %titlebar;
 }
@@ -1767,6 +1809,16 @@ menubar,
     border: 0px solid;
     border-color: transparent;
 
+    // remove padding and rounding from menubar submenus
+    menu {
+      border-radius: 0;
+      padding:0;
+      menu {
+        border-radius: 0;
+        padding:0;
+      }
+    }
+
     &:hover { //Seems like it :hover even with keyboard focus
       border: 0px solid;
       border-color: transparent;
@@ -1782,6 +1834,9 @@ menubar,
       box-shadow: none;
     }
   }
+
+  // remove padding and rounding from menubar submenu decoration
+  .csd.popup decoration {border-radius:0;}
 }
 
 menu,
@@ -1842,13 +1897,14 @@ menu,
     border-radius: 0;
 
     &.top {
-      margin-top: -6px;
+      margin-top: -4px;
       border-bottom: 1px solid mix($fg_color, $base_color, 10%);
       -gtk-icon-source: -gtk-icontheme('pan-up-symbolic');
     }
 
     &.bottom {
-      margin-bottom: -6px;
+      margin-top: 8px;
+      margin-bottom: -12px;
       border-top: 1px solid mix($fg_color, $base_color, 10%);
       -gtk-icon-source: -gtk-icontheme('pan-down-symbolic');
     }
@@ -1945,10 +2001,7 @@ notebook {
     &.top, &.bottom { padding-left: 0; padding-right: 0; }
     &.left, &.right { padding-top: 0; padding-bottom: 0; }
 
-    tabs { 
-      margin: -1px;
-      //min-height: 28px;
-    }
+    tabs { margin: 0px; }
 
     @each $_pos in (top), (right), (bottom), (left) {
     
@@ -2380,6 +2433,8 @@ switch {
     border: none;
     box-shadow: none;
   }
+
+  image { color: transparent; }
 }
 
 @each $k,$l in ('',''),
@@ -2451,19 +2506,31 @@ switch {
 }
 
 // Selectionmode
-@each $s,$as in ('','-selectionmode'),
-                  (':checked', '-checked-selectionmode') {
-  .view.content-view.check#{$s}:not(list),
-  .content-view .tile check#{$s}:not(list) {
-    -gtk-icon-source: -gtk-scaled(url("assets/checkbox#{$as}#{$asset_suffix}.png"),
-                                    url("assets/checkbox#{$as}#{$asset_suffix}@2.png"));
-    background-color: transparent;
-    min-width: 40px;
-    min-height: 40px;
+//selection-mode
+@each $check_state, $check_icon, $check_color, $check_background in
+  ('', 'none', 'transparent', '#{transparentize($selected_bg_color, .05)}'),
+  (':hover', 'none', 'transparent', '#{transparentize($selected_bg_color, .05)}'),
+  (':active', 'none', 'transparent', '#{transparentize($selected_bg_color, .05)}'),
+  (':backdrop', 'none', 'transparent', '#{transparentize(desaturate($selected_bg_color, 100%), .05)}'),
+  (':checked', '-gtk-icontheme(\'object-select-symbolic\')', '#{$osd_fg_color}', '#{transparentize($selected_bg_color, .05)}'),
+  (':checked:hover', '-gtk-icontheme(\'object-select-symbolic\')', '#{$osd_fg_color}', '#{transparentize($selected_bg_color, .05)}'),
+  (':checked:active', '-gtk-icontheme(\'object-select-symbolic\')', '#{$osd_fg_color}', '#{transparentize($selected_bg_color, .05)}'),
+  (':backdrop:checked', '-gtk-icontheme(\'object-select-symbolic\')', '#{transparentize($osd_fg_color, 0.2)}', '#{transparentize(desaturate($selected_bg_color, 100%), .05)}'), {
+
+  .view.content-view.check#{$check_state}:not(list),
+  .content-view .tile check#{$check_state}:not(list) {
+    margin: 4px;
+    min-width: 32px;
+    min-height: 32px;
+    color: #{$check_color};
+    background-color: #{$check_background};
+    border-radius: 4px;
     background-image: none;
     transition: none;
     box-shadow: none;
     border-width: 0;
+    -gtk-icon-source: #{$check_icon};
+    -gtk-icon-shadow: none;
   }
 }
 
@@ -2533,7 +2600,7 @@ radio {
   }
 
   // ...on selected list rows
-  row:selected & { &:disabled, & { border-color: $selected_borders_color; } }
+  row:selected &, menuitem:hover & { &:disabled, & { border-color: $selected_borders_color; } }
 
   // OSD
   .osd & {
@@ -3085,17 +3152,6 @@ scrolledwindow {
     }
   }
 
-  // Overflow indication, works similarly to the overshoot, the size if fixed tho.
-  undershoot {
-    &.top { @include undershoot(top); }
-
-    &.bottom { @include undershoot(bottom); }
-
-    &.left { @include undershoot(left); }
-
-    &.right { @include undershoot(right); }
-  }
-
   junction { // the small square between two scrollbars
     border-color: transparent;
     // the border image is used to add the missing dot between the borders, details, details, details...
@@ -3283,19 +3339,21 @@ filechooserbutton:drop(active) {
   border-style: none;
   background-color: mix($bg_color, $base_color, 50%);
 
-  @at-root %sidebar_left,
-  &:dir(ltr),
-  &.left,
-  &.left:dir(rtl) {
-    border-right: 1px solid $borders_color;
-    border-left-style: none;
-  }
+  &:not(separator) {
+    @at-root %sidebar_left,
+    &:dir(ltr),
+    &.left,
+    &.left:dir(rtl) {
+      border-right: 1px solid $borders_color;
+      border-left-style: none;
+    }
 
-  @at-root %sidebar_right
-  &:dir(rtl),
-  &.right {
-    border-left: 1px solid $borders_color;
-    border-right-style: none;
+    @at-root %sidebar_right,
+    &:dir(rtl),
+    &.right {
+      border-left: 1px solid $borders_color;
+      border-right-style: none;
+    }
   }
 
   list { background-color: transparent; }
@@ -3326,6 +3384,21 @@ stacksidebar {
 
       background-size: 6px 6px, 0 0;
     }
+  }
+}
+
+separator.sidebar {
+  background-color: $borders_color;
+  border-style: none;
+  margin: 0px 0px 0px 0px;
+
+  &:backdrop {
+    background-color: $backdrop_borders_color;
+  }
+
+  &.selection-mode,
+  .selection-mode & {
+    background-color: darken($selected_bg_color, 20%);
   }
 }
 
@@ -3780,6 +3853,8 @@ decoration {
   .tiled-bottom &,
   .tiled-left & { border-radius: 0; }
 
+  .maximized &,
+  .fullscreen &,
   .popup & { box-shadow: none; }
 
   // server-side decorations as used by mutter
@@ -3958,6 +4033,23 @@ stackswitcher button.text-button.circular { // FIXME aggregate with buttons
   min-width: 32px;
   min-height: 32px;
   padding: 0;
+}
+
+/*************
+ * App Icons *
+ *************/
+/* Outline for low res icons */
+.lowres-icon {
+  -gtk-icon-shadow: 1px 1px rgba(0,0,0,0.3),
+                    -1px -1px rgba(0,0,0,0.3),
+                    -1px 1px rgba(0,0,0,0.3),
+                    1px -1px rgba(0,0,0,0.3);
+}
+
+/* Drapshadow for large icons */ 
+.icon-dropshadow {
+  -gtk-icon-shadow: 0 2px 12px rgba(0,0,0,0.2), 
+                    0 1px 2px rgba(0,0,0,0.7);
 }
 
 /*********
