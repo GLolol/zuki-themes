@@ -3,7 +3,7 @@ Upstream-Name: zuki-themes
 Source: https://github.com/lassekongo83/zuki-themes
 
 Files: *
-Copyright: 2014-2016 lassekongo83 <lassekongo83@yahoo.se>
+Copyright: 2014-2019 lassekongo83 <lassekongo83@yahoo.se>
 License: GPL-3.0
 
 Files: Zuki-shell/gnome-shell/gnome-shell.css
@@ -14,7 +14,7 @@ Copyright: 2009, 2015 Red Hat, Inc.
 License: LGPL-2.1
 
 Files: debian/*
-Copyright: 2016 James Lu <bitflip3@gmail.com>
+Copyright: 2016-2019 James Lu <james@overdrivenetworks.com>
 License: GPL-3.0
 
 License: GPL-3.0
