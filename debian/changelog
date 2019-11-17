@@ -3,6 +3,8 @@ zuki-themes (3.34-1-0utopia1) UNRELEASED; urgency=medium
   * New upstream release.
   * Update to debhelper 12 and meson+ninja as build system.
   * Add B-D: sassc, meson
+  * Bump Standards-Version to 4.4.1:
+    - Remove obsolete get-orig-source target
 
  -- James Lu <james@overdrivenetworks.com>  Sat, 16 Nov 2019 21:33:29 -0800
 
