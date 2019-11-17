@@ -15,12 +15,6 @@ override_dh_fixperms:
 	dh_fixperms
 	find debian/$(PACKAGE) -type f -perm 755 -print -exec chmod 644 {} \;
 
-override_dh_auto_clean:
-	# Remove screenshots from source tree when building, because these are not
-	# part of Git-generated archives and will cause build errors.
-	rm -f zukitwo.png zukitre.png
-	dh_auto_clean
-
 # Remove bundled shell scripts as they don't use the right interpreter paths
 # and are otherwise not needed in the final theme package.
 override_dh_install:
