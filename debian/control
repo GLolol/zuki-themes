@@ -2,7 +2,9 @@ Source: zuki-themes
 Section: gnome
 Priority: optional
 Maintainer: James Lu <james@overdrivenetworks.com>
-Build-Depends: debhelper (>= 11~)
+Build-Depends: debhelper-compat (= 12),
+               meson,
+               sassc
 Standards-Version: 4.3.0
 Homepage: https://github.com/lassekongo83/zuki-themes
 Vcs-Git: https://github.com/utopia-repository/zuki-themes
