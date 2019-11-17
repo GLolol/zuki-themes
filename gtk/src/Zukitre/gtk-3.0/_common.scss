@@ -1726,48 +1726,45 @@ treeview.view {
   &.progressbar { // progress bar in treeviews
     @if $variant == light { color: $base_color; }
 
-    border: 1px solid $selected_borders_color;
-    border-radius: $window-radius;
     background-color: $selected_bg_color;
-    background-image: none;
-    box-shadow: inset 0 1px if($variant=='light', transparentize(white, 0.7),
-                                                  transparentize(white, 0.85)),
-                      0 1px if($variant=='light', transparentize(black, 0.8),
-                                                  transparentize(black, 0.9));
+    background-image: image($selected_bg_color);
+    box-shadow: none;
 
     &:selected {
       &:focus, & {
-        border-radius: $window-radius;
-
         @if $variant == 'light' {
           color: $selected_bg_color;
-          box-shadow: none;
         }
 
         @else { box-shadow: inset 0 1px transparentize(white, 0.95); }
 
-        background-image: none;
-        background-color: darken($base_color, 10%);
+        background-image: image($base_color);
+
+        &:backdrop {
+          @if $variant == 'light' {
+            color: $selected_bg_color;
+          }
+          background-color: $backdrop_base_color;
+        }
       }
+    }
+
+    &:backdrop {
+      @if $variant == 'light' { color: $backdrop_base_color; }
+
+      background-image: none;
+      box-shadow: none;
     }
   }
 
   &.trough { // progress bar trough in treeviews
-    background-color: transparentize($fg_color, 0.9);
-    border-radius: $window-radius;
+    background-color: transparentize($fg_color,0.9);
 
     &:selected {
       &:focus, & {
         background-color: if($variant == 'light',
                              transparentize($selected_fg_color, 0.7),
                              darken($selected_bg_color, 10%));
-        border-radius: $window-radius;
-
-        @if $variant == 'light' {
-          border-width: 1px 0;
-          border-style: solid;
-          border-color: $selected_bg_color;
-        }
       }
     }
   }
@@ -1852,11 +1849,9 @@ menubar,
 
     // remove padding and rounding from menubar submenus
     menu {
-      border-radius: 0;
-      padding:0;
-      menu {
+      &:dir(rtl), &:dir(ltr) { // specificity bump
         border-radius: 0;
-        padding:0;
+        padding: 0;
       }
     }
 
@@ -1964,6 +1959,7 @@ menuitem {
 
   check,
   radio {
+    &:checked, &:checked:hover { @include check(menuitem-checked); }
     min-height: 16px;
     min-width: 16px;
 
@@ -2549,6 +2545,7 @@ treeview.view radio {
     &:focus, & {
       color: $selected_fg_color;
       border-color: $selected_borders_color;
+      background-color: $selected_bg_color;
     }
 
     &:disabled {
@@ -3613,7 +3610,6 @@ paned {
 //------------//
 // GtkInfoBar //
 //------------//
-// FIXME: Revisit this one at some point and use proper colors for each one
 infobar {
   border-style: none;
 
@@ -3621,37 +3617,46 @@ infobar {
   &.question,
   &.warning,
   &.error {
-    &:backdrop, & {
-      label, & { color: $selected_fg_color; }
-      background-color: lighten($dark_bg_color, 10%);
-      border-color: darken($selected_bg_color, 10%);
+    &:backdrop > revealer > box, & > revealer > box {
+      label, & { color: $fg_color; }
+      background-color: if($variant == 'light', desaturate(lighten(invert($selected_bg_color), 45%), 30%), 
+                        desaturate(darken(invert($selected_bg_color),40%), 70%));
+      border-bottom: 1px solid lighten($borders_color, 5%);
     }
 
     text-shadow: none;
 
+    &:backdrop { text-shadow: none; }
+
     button {
       // FIXME: extend selection mode buttons
-      @include button(normal, lighten($dark_bg_color, 15%), $selected_fg_color, none);
+      @include button(normal, $bg_color, $fg_color, none);
 
-      &:hover { @include button(hover, lighten($dark_bg_color, 20%), $selected_fg_color, none); }
+      &:hover { @include button(hover, $bg_color, $fg_color, none); }
 
       &:active,
-      &:checked { @include button(active, darken($dark_bg_color, 10%), $selected_fg_color, none); }
+      &:checked { @include button(active, $bg_color, $fg_color, none); }
 
-      &:disabled { @include button(insensitive,lighten($dark_bg_color, 5%),$selected_fg_color,none); }
+      &:disabled { @include button(insensitive,$bg_color,$fg_color,none); }
 
       &:backdrop {
-        @include button(backdrop, lighten($dark_bg_color, 5%), $selected_fg_color, none);
+        @include button(backdrop, $bg_color, $fg_color, none);
+        border-color: _border_color($bg_color);
 
         &:disabled {
-          @include button(backdrop-insensitive, $dark_bg_color, $selected_fg_color, none);
+          @include button(backdrop-insensitive, $bg_color,
+                          $fg_color, none);
+          border-color: _border_color($bg_color);
         }
+      }
+      &:backdrop, & {
+        label, & { color: $fg_color; }
       }
     }
 
-    selection { background-color: darken($dark_bg_color, 10%); }
+    selection { background-color: darken($bg_color, 10%); }
 
-    *:link { @extend %link_selected; }
+    *:link { color: $link_color; }
   }
 }
 
@@ -4012,6 +4017,7 @@ headerbar,
 
     &:backdrop {
       color: $backdrop_selected_fg_color;
+      &, &:hover { background-color: $selected_bg_color; }
 
       &:disabled { color: mix($backdrop_selected_fg_color, $selected_bg_color, 30%); }
     }
@@ -4080,10 +4086,13 @@ stackswitcher button.text-button.circular { // FIXME aggregate with buttons
                     -1px 0 rgba(0,0,0,0.1);
 }
 
-// Drapshadow for large icons
+// Dropshadow for large icons
 .icon-dropshadow {
-  -gtk-icon-shadow: 0 2px 12px rgba(0,0,0,0.1), 
-                    0 1px 2px rgba(0,0,0,0.5);
+  -gtk-icon-shadow: 0 1px 12px rgba(0,0,0,0.05),
+      0 -1px rgba(0,0,0,0.05),
+      1px 0 rgba(0,0,0,0.1),
+      0 1px rgba(0,0,0,0.3),
+      -1px 0 rgba(0,0,0,0.1);
 }
 
 //-------//

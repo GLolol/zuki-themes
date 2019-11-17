@@ -410,6 +410,28 @@ StScrollBar {
   padding-bottom: 8px;
 }
 
+.prompt-dialog-null-label {
+  font-size: 10pt;
+  padding-bottom: 8px;
+}
+
+.prompt-dialog-pim-box {
+  spacing: 1em;
+}
+
+.prompt-dialog-grid {
+  spacing-rows: 15px;
+  spacing-columns: 1em;
+}
+
+.prompt-dialog-keyfiles-box {
+  spacing: 1em;
+}
+
+.prompt-dialog-button.button {
+  padding: 8px;
+}
+
 // Polkit Dialog
 
 .polkit-dialog-user-layout {
@@ -561,12 +583,33 @@ StScrollBar {
   border-bottom-style: solid;
 }
 
+// Rename popup
+
+.rename-folder-popup {
+  .rename-folder-popup-item {
+    spacing: 6px;
+    &:ltr, &:rtl { padding: 0, 12px; }
+  }
+}
+
 // Background menu
 .background-menu { -boxpointer-gap: 4px; -arrow-rise: 0px; }
 
 // fallback menu
 // - odd thing for styling App menu when apparently not running under shell. Light Adwaita styled
 //   app menu inside the main app window itself rather than the top bar
+
+// App Icons
+
+// Outline for low res icons
+.lowres-icon {
+  icon-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+// Drapshadow for large icons
+.icon-dropshadow {
+  icon-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
 
 // OSD
 .osd-window {
@@ -678,8 +721,9 @@ StScrollBar {
   spacing: 8px;
 }
 
-.ws-switcher-active-up, .ws-switcher-active-down {
-  height: 50px;
+.ws-switcher-active-up, .ws-switcher-active-down,
+.ws-switcher-active-left, .ws-switcher-active-right {
+  height: 52px;
   background-color: $selected_bg_color;
   color: $selected_fg_color;
   background-size: 32px;
@@ -1093,11 +1137,6 @@ StScrollBar {
 
 // a little unstructured mess:
 
-.system-switch-user-submenu-icon {
-  icon-size: 16px;
-  padding: 0 4px;
-}
-
 #appMenu {
   spinner-image: url("process-working.svg");
   spacing: 4px;
@@ -1154,6 +1193,15 @@ StScrollBar {
   border: 1px solid $selected_bg_color;
 }
 
+// Pointer location
+.ripple-pointer-location {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px 25px 25px 25px; // radius the size of the box give us the curve
+  background-color: lighten(transparentize($selected_bg_color, 0.7), 30%);
+  box-shadow: 0 0 2px 2px lighten($selected_bg_color, 20%);
+}
+
 // not really top bar only
 .popup-menu-arrow { icon-size: 1.09em; }
 .popup-menu-icon { icon-size: 1.09em; }
@@ -1179,6 +1227,15 @@ StScrollBar {
   &:active {
     background-color: darken($close_button, 5%);
   }
+}
+
+// Pointer accessibility notifications
+.pie-timer {
+  width: 60px;
+  height: 60px;
+  -pie-border-width: 3px;
+  -pie-border-color: $selected_bg_color;
+  -pie-background-color: lighten(transparentize($selected_bg_color, 0.7), 40%);
 }
 
 // NETWORK DIALOGS
@@ -1286,11 +1343,8 @@ StScrollBar {
 
 //search results
 
-#searchResultsBin {
-  max-width: 1000px;
-}
-
 #searchResultsContent {
+  max-width: 1000px;
   padding-left: 20px;
   padding-right: 20px;
   spacing: 16px;
@@ -1401,11 +1455,11 @@ StScrollBar {
 .search-provider-icon,
 .list-search-result {
   @extend %icon_tile;
-  &:active, &:checked { background-color: transparentize(darken($osd_bg_color,10%),.1); }
   &:focus, &:selected, &:hover {
     background-color: transparentize($osd_fg_color,.9);
     transition-duration: $long-duration;
   }
+  &:active, &:checked { background-color: transparentize(darken($osd_bg_color,10%),.1); }
 }
 .app-well-app,
 .app-well-app.app-folder,
@@ -1424,6 +1478,9 @@ StScrollBar {
     transition-duration: 0ms;
     border-image: none;
     background-image: none;
+  }
+  &:drop .overview-icon {
+    background-color: transparentize($selected_bg_color,.15);
   }
 }
 
@@ -1513,7 +1570,6 @@ StScrollBar {
 }
 
 //Some hacks I don't even
-.search-display > StBoxLayout,
 .all-apps,
 .frequent-apps > StBoxLayout {
   // horizontal padding to make sure scrollbars or dash don't overlap content
